@@ -6,6 +6,18 @@ export function intervalsOverlap(a: Interval, b: Interval): boolean {
   return a.start < b.end && b.start < a.end;
 }
 
+// AC1, structural half: an interval is well-formed when 0 <= start < end <= 1440.
+// Practice #09: this rule used to live twice, here and inside App.tsx as a local arrow
+// function. One exported pure predicate now owns it, so the checker and the UI cannot drift.
+export function isValidInterval(candidate: Interval | null): candidate is Interval {
+  return (
+    candidate !== null &&
+    candidate.start >= 0 &&
+    candidate.end <= MINUTES_PER_DAY &&
+    candidate.start < candidate.end
+  );
+}
+
 export function checkAvailability(
   candidate: Interval,
   room: Room | undefined,
@@ -15,7 +27,7 @@ export function checkAvailability(
   const reasons: string[] = [];
 
   // AC1: 0 ≤ start < end ≤ 1440 and start after current time
-  if (candidate.start < 0 || candidate.end > MINUTES_PER_DAY || candidate.start >= candidate.end) {
+  if (!isValidInterval(candidate)) {
     reasons.push('Interval must satisfy 0 ≤ start < end ≤ 1440 minutes.');
   } else {
     if (candidate.start <= currentTimeMinutes) {

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { rooms, sampleBookings } from '@/lib/data';
-import { checkAvailability, formatTime, parseTimeToMinutes } from '@/lib/availability';
-import type { CheckResult, Interval } from '@/lib/types';
+import { checkAvailability, formatTime, isValidInterval, parseTimeToMinutes } from '@/lib/availability';
+import type { CheckResult } from '@/lib/types';
 import { MINUTES_PER_DAY } from '@/lib/types';
 import RoomCard from '@/components/RoomCard';
 import Timeline from '@/components/Timeline';
@@ -40,10 +40,9 @@ export default function App() {
     return { start: s, end: e };
   })();
 
-  // FIX 1: structurally valid interval (0 <= start < end <= 1440)
-  const isValidInterval = (c: Interval | null): c is Interval =>
-    c !== null && c.start >= 0 && c.end <= MINUTES_PER_DAY && c.start < c.end;
-
+  // FIX 1 / Practice #09 refactor: the structural interval rule is no longer duplicated here.
+  // It is the one exported pure predicate in src/lib/availability.ts, used by both this component
+  // and checkAvailability, so the UI guard and the booking rule cannot disagree.
   const handleCheck = () => {
     setValidated(true);
     if (!rawCandidate) {
