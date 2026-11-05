@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { checkAvailability, intervalsOverlap } from '@/lib/availability';
 import { rooms, sampleBookings } from '@/lib/data';
-import type { Interval } from '@/lib/types';
 
 const now = 540; // 09:00 fixed time for deterministic tests
 
